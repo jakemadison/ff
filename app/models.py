@@ -5,6 +5,7 @@ from app import db
 
 class User(db.Model):
     __tablename__ = 'users'
+    __table_args__ = {'useexisting': True}
 
     id = db.Column(db.String, nullable=False, primary_key=True)
     created = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)

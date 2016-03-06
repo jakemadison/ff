@@ -1,1 +1,14 @@
 # Created by .ignore support plugin (hsz.mobi)
+
+# Ignore temp stuff
+*.py[cod]
+
+# Ignore IDE stuff
+.idea/
+friend_fortifier.iml
+
+# Ignore DB
+app.db
+
+# Ignore local config
+local_config.py
