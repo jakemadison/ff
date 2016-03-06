@@ -67,5 +67,30 @@ Really need to change that name.  Ugh.
 
 
 
+FUCKING FUCKER FUCK!!
+===========
+
+Okay, ALWAYS REMEMBER FACEBOOK IS THE WORST AND IS GOOD FOR ABSOLUTELY NOTHING.
+
+
+So, apparently, you cannot even get someone's list of friends from an auth'd fb app.
+In fact, you can't seem to get shit all from FB now.
+
+What I can get:
+=> user details from an id: photo, name.
+=> that's about it.
+
+
+Options here:
+=> fuck facebook right in the fucking face.  totally disconnect from it, make this a roll your own thing.
+=> this is a p.i.t.a. because all friend details will need to be user-supplied
+=> do twitter instead, or instagram maybe.
+=> go through gmail.  This has a lot of problems too.
+=> somehow try and bruteforce/scrape friend ids from FB.  Pretty problamatic. 
+
+
+
+
+
 
 
