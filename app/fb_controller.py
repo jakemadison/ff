@@ -26,35 +26,22 @@ import requests
 def explore_api():
 
     access_token = fb_config['FB_TEST_TOKEN']
-
     graph = GraphAPI(access_token)
-    profile = graph.get_object(id='10152972423651677')
+
+    profile = graph.get_object(id='me')
     print profile
 
-    friends = graph.get_connections(id='10152972423651678', connection_name='friends')
-    print friends
+    friends = graph.get_connections(id='me', connection_name='posts')
+    for post in friends['data']:
+        print post
+        print '====='
+        print
 
-    #
-    # allfriends = []
-    #
-    # # Wrap this block in a while loop so we can keep paginating requests until
-    # # finished.
-    # while(True):
-    #     try:
-    #         for friend in friends['data']:
-    #             allfriends.append({'name': friend['name'].encode('utf-8'), 'id': friend['id'].encode('utf-8')})
-    #         # Attempt to make a request to the next page of data, if it exists.
-    #         friends = requests.get(friends['paging']['next']).json()
-    #         print friends
-    #     except KeyError:
-    #         # When there are no more pages (['paging']['next']), break from the
-    #         # loop and end the script.
-    #         print 'end'
-    #         break
-    # print allfriends
-    #
-    #
-    #
+    comments = graph.get_connections(id='10154560562405931_10154527868385931', connection_name='likes')
+
+    for comment in comments['data']:
+        print comment
+
 
 
 

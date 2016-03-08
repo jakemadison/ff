@@ -89,6 +89,50 @@ Options here:
 => somehow try and bruteforce/scrape friend ids from FB.  Pretty problamatic. 
 
 
+Okay: May be able to do this using only the user_posts permission.  Still requires FB review, but we can
+hopefully go through comments and likes.
+"Provides access to the posts on a person's Timeline. Includes their own posts, posts they are tagged in, 
+and posts other people make on their Timeline."
+
+maybe also:
+user_likes
+
+Provides access to the list of all Facebook Pages and Open Graph objects that a person has liked. 
+This list is available through the likes edge on the User object.
+
+and
+
+user_photos
+
+Provides access to the photos a person has uploaded or been tagged in. This is available through the photos edge 
+on the User object.
+
+=====
+
+
+Okay, so confirmed:
+=======
+
+AFAICT, I can go through a user's facebook post history which will include everything they've posted on their own
+ wall, who has commented and liked it.  That stream will also return items other people have posted on their wall
+ (which should get some sort of higher weighting), and of course what other people have written on there.
+ 
+ It also looks like I can get everything (all graph objects) that our current user likes.
+  
+  Now, at this point, we might say: does the symmetry of a friendship matter?  Do they need to like my stuff as
+  much as I like theirs?  If we give points to both likings though, this should just show up in the results
+  anyways, as it will get double points.
+  
+  user photos, getting likes from ones you're tagged in is clearly a thing, as is getting comments.
+  
+  being tagged with someone in a photo should probably render the highest score.
+  
+  also, make all scores configurable, obviously.
+  
+  
+
+
+
 
 
 
