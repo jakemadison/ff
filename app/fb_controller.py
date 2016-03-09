@@ -18,6 +18,37 @@ from app import app, db
 from models import User
 from local_config import fb_config
 import requests
+import pickle
+
+
+def connect_to_graph(access_token):
+    graph = GraphAPI(access_token)
+    return graph
+
+
+def get_all_post_ids(graph):
+
+    post_ids = []
+
+    posts = graph.get_connections(id='me', connection_name='posts')
+
+    while posts['data']:
+
+        for post in posts['data']:
+            post_ids.append(post['id'])
+
+        if 'next' in posts['paging']:
+            print 'paging...'
+            posts = requests.get(posts['paging']['next']).json()
+
+        else:
+            print 'broke it'
+            break
+
+    return post_ids
+
+
+
 
 
 
@@ -25,26 +56,16 @@ import requests
 
 def explore_api():
 
-    access_token = fb_config['FB_TEST_TOKEN']
-    graph = GraphAPI(access_token)
+    # graph = connect_to_graph(access_token=fb_config['FB_TEST_TOKEN'])
+    # all_post_ids = get_all_post_ids(graph)
+    #
+    # with open('temp_data.pickle', 'wb') as f:
+    #     pickle.dump(all_post_ids, f)
 
-    profile = graph.get_object(id='me')
-    print profile
+    with open('temp_data.pickle') as f:
+        all_post_ids = pickle.load(f)
 
-    friends = graph.get_connections(id='me', connection_name='posts')
-    for post in friends['data']:
-        print post
-        print '====='
-        print
-
-    comments = graph.get_connections(id='10154560562405931_10154527868385931', connection_name='likes')
-
-    for comment in comments['data']:
-        print comment
-
-
-
-
+    print all_post_ids
 
 
 if __name__ == '__main__':
