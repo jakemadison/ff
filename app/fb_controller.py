@@ -49,6 +49,16 @@ def get_all_post_ids(graph):
 
 
 
+def get_all_comments_likes_per_post(graph, post_id):
+    post = graph.get_object(id=post_id)
+    print(post['message'])
+
+    comments = graph.get_connections(id=post_id, connection_name='comments')
+    likes = graph.get_connections(id=post_id, connection_name='likes')  # does not get the new reactions??
+
+    print 'comments:\n', comments
+    print 'likes:\n', likes
+
 
 
 
@@ -56,7 +66,7 @@ def get_all_post_ids(graph):
 
 def explore_api():
 
-    # graph = connect_to_graph(access_token=fb_config['FB_TEST_TOKEN'])
+    graph = connect_to_graph(access_token=fb_config['FB_TEST_TOKEN'])
     # all_post_ids = get_all_post_ids(graph)
     #
     # with open('temp_data.pickle', 'wb') as f:
@@ -65,7 +75,9 @@ def explore_api():
     with open('temp_data.pickle') as f:
         all_post_ids = pickle.load(f)
 
-    print all_post_ids
+    for each_post_id in all_post_ids:
+        get_all_comments_likes_per_post(graph, each_post_id)
+        break
 
 
 if __name__ == '__main__':
