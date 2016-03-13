@@ -10,6 +10,12 @@
     <!-- These are Open Graph tags.-->
     <meta property="fb:app_id" content="{{ app_id }}" />
 
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+
+
     <title>{{ app_name }}</title>
 
     <!-- Style -->
@@ -23,7 +29,7 @@
       </script>
     <![endif]-->
 </head>
-<body>
+<body onload="get_data();">
     <script type="text/javascript">
         window.fbAsyncInit = function() {
             FB.init({
@@ -52,5 +58,9 @@
         {% block content %} {% endblock %}
     </div>
 
+
+
+
+    <script src="static/main.js" charset="utf-8"></script>
 </body>
 </html>

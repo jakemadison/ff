@@ -19,6 +19,9 @@ from models import User
 from local_config import fb_config
 import requests
 import pickle
+import operator
+from models import Like_History
+from sqlalchemy import desc, asc
 
 
 def connect_to_graph(access_token):
@@ -49,15 +52,56 @@ def get_all_post_ids(graph):
 
 
 
-def get_all_comments_likes_per_post(graph, post_id):
-    post = graph.get_object(id=post_id)
-    print(post['message'])
+def get_all_comments_likes_per_post(graph, post_id, current_results):
 
-    comments = graph.get_connections(id=post_id, connection_name='comments')
+    post = graph.get_object(id=post_id)
+    print post['created_time']
+
+    # comments = graph.get_connections(id=post_id, connection_name='comments')
     likes = graph.get_connections(id=post_id, connection_name='likes')  # does not get the new reactions??
 
-    print 'comments:\n', comments
-    print 'likes:\n', likes
+    # print 'comments:\n', comments
+    # print 'likes:\n', likes
+
+    for each_like in likes['data']:
+        print each_like
+        print '.',
+        # like_data = graph.get_object(id=each_like['id'])
+
+        # if like_data['name'] not in current_results:
+        #     current_results[like_data['name']] = 0
+
+        # current_results[like_data['name']] += 1
+
+        like_record = Like_History(name='name later', date=post['created_time'], user_id=each_like['id'])
+        db.session.add(like_record)
+        db.session.commit()
+
+    print
+
+    sorted_map = sorted(current_results.items(), key=operator.itemgetter(1))
+
+    for each_count in sorted_map:
+        print each_count
+
+    return current_results
+
+
+
+
+def get_friend_data():
+
+    friends = Like_History.query.order_by(asc(Like_History.date)).filter(Like_History.date >= '2010-01-01').all()
+
+    friend_data = []
+
+    for friend in friends:
+        friend_data.append({'user_id': friend.user_id, 'date': friend.date})
+
+    return friend_data
+
+
+
 
 
 
@@ -72,16 +116,28 @@ def explore_api():
     # with open('temp_data.pickle', 'wb') as f:
     #     pickle.dump(all_post_ids, f)
 
-    with open('temp_data.pickle') as f:
-        all_post_ids = pickle.load(f)
+    # with open('temp_data.pickle') as f:
+    #     all_post_ids = pickle.load(f)
 
-    for each_post_id in all_post_ids:
-        get_all_comments_likes_per_post(graph, each_post_id)
+    # current_results = {}
+
+    # for each_post_id in all_post_ids:
+    #     current_results = get_all_comments_likes_per_post(graph, each_post_id, current_results)
+        # break
+
+
+    friends = Like_History.query.all()
+
+    for each_friend in friends:
+        print graph.get_connections(id=str(each_friend.user_id), connection_name='public_profile')
         break
 
 
+
+
 if __name__ == '__main__':
-    explore_api()
+    # explore_api()
+    get_friend_data()
 
 
 

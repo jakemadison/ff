@@ -5,7 +5,7 @@
        style="background-image: url(https://graph.facebook.com/{{ user['id'] }}/picture?type=large);
               margin-left: auto; margin-right: auto;">
     </p>
-    <h3>Hello, {{ user['name'] }}.</h3>
+    <h3>{{ user['name'] }}: <span id="date_label">?</span></h3>
     <a href="/logout" id="logout">Log out</a>
     <script>
         document.getElementById('logout').onclick = function() {

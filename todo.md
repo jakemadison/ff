@@ -131,7 +131,10 @@ AFAICT, I can go through a user's facebook post history which will include every
   
   
 
-
+Hmmmm
+========
+so, it takes forever to actually get this data... so, could make it run forwards and get data on the fly as it goes..
+on each one, a few more points.... hmmmm...
 
 
 

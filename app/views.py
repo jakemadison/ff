@@ -1,10 +1,10 @@
 from facebook import get_user_from_cookie, GraphAPI
-from flask import g, render_template, redirect, request, session, url_for
+from flask import g, render_template, redirect, request, session, url_for, jsonify
 
 from app import app, db
 from models import User
 from local_config import fb_config
-
+from fb_controller import get_friend_data
 
 @app.route('/')
 def index():
@@ -80,3 +80,9 @@ def get_current_user():
     # Commit changes to the database and set the user as a global g.user
     db.session.commit()
     g.user = session.get('user', None)
+
+
+@app.route('/get_friend_data')
+def friend_request():
+    friend_data = get_friend_data()
+    return jsonify({'data': friend_data})

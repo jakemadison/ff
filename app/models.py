@@ -14,3 +14,14 @@ class User(db.Model):
     name = db.Column(db.String, nullable=False)
     profile_url = db.Column(db.String, nullable=False)
     access_token = db.Column(db.String, nullable=False)
+
+
+
+class Like_History(db.Model):
+    __tablename__ = 'like_history'
+    __table_args__ = {'useexisting': True}
+
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    date = db.Column(db.String, nullable=False)
+    user_id = db.Column(db.Integer)
