@@ -138,6 +138,16 @@ on each one, a few more points.... hmmmm...
 
 
 
+=======
+Left to do:
+- speed offset should be inversely affected by number of total likes.  (slows a frequent liker down)
+- removed elements shouldn't use up resources...
+- get stuff lazily/as we go rather than storing everything upfront
+- actual support for someone else to log in
+- fb review??
+- fix the stop/start btn
+
+
 
 
 

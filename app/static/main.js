@@ -4,7 +4,7 @@
 
 
 var animation_speed = 150;
-var jiggle = 5;  // amt of randomness to add.
+var jiggle = 4;  // amt of randomness to add.
 var jiggle_duration = 75;
 var animating = false;
 var advance_timer;
@@ -12,7 +12,7 @@ var advance_timer;
 var margin = 100;
 var screen_width = (window.innerWidth || window.clientWidth || window.clientWidth) - margin;
 //var screen_height = (window.innerHeight|| window.clientHeight|| window.clientHeight) - margin;
-var screen_height = 10000;
+var screen_height = 1000;
 
 function reset_distance(arr, target_id, target_name, target_photo_id) {
     /*
@@ -100,12 +100,14 @@ function update_data(likes, svg) {
             .attr("transform", function (d) {
                 var x_val = Math.random() * (screen_width - 100);
                 d.x_val = x_val;
-                return "translate(" + x_val + "," + 100 + ")";
+                var y_offset = Math.floor(Math.abs(Math.random() * 10));
+                d.y_offset = y_offset;
+
+                d.speed_offset = Math.floor(Math.abs(Math.random() * 18))+2;
+
+                return "translate(" + x_val + "," + (0 + y_offset) + ")";
             })
-    //
-    //.attr("x", function (d, i) {
-    //    return ;
-    //})
+
         ;
 
     // add text to our object:
@@ -119,7 +121,7 @@ function update_data(likes, svg) {
         .attr("class", "node_image")
         .attr("width", "100px")
         .attr("height", "100px")
-        .style('opacity',.6);
+        .style('opacity',1);  // .6
 
 
     node_enter.select(".node_image").attr("xlink:href", function (d) {
@@ -138,12 +140,26 @@ function update_data(likes, svg) {
     // operate on the entire group object:
     node.transition().duration(animation_speed + (Math.random() * jiggle_duration))
         .attr("transform", function (d, i, j) {
-            return "translate(" + d.x_val + "," + (d.distance + 0) + (Math.random() * jiggle) + ")";
+            d.y_cur = (d.distance + d.y_offset) * (d.speed_offset);
+            return "translate(" + d.x_val + "," + d.y_cur + ")";
+        })
+        .attr('opacity', function (d) {
+            return .9 - (d.y_cur/1000);
         });
 
+    //;
+    //
+    //
+    //node.transition().duration(1000).ease('back')
+    //    .attr('opacity', function (d) {
+    //     return 1/d.distance;
+    //    });
+
     node.select(".node_text").text(function (d) {
-        return d.user_name + '   -> ' + d.like_count + ' (' + d.distance + ')';
+        return d.user_name + ': ' + d.like_count; // + ' (' + d.distance + ')';
     });
+
+
 
 
 }
@@ -172,7 +188,9 @@ function start_animation(data) {
 
 
     function advance_day() {
-        $('#date_label').text(current_date);
+        var date_string = current_date.toString().substring(4);
+            date_string = date_string.slice(0, -24);
+        $('#date_label').text(date_string);
 
         var index_date = new Date(data[index].date);
 
