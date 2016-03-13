@@ -99,7 +99,10 @@ def get_friend_data(target_user_id):
     friend_data = []
 
     for friend in friends:
-        friend_data.append({'user_id': friend.user_id, 'date': friend.date, 'name': friend.name})
+        friend_data.append({'user_id': friend.user_id,
+                            'date': friend.date,
+                            'name': friend.name,
+                            'target_photo_id': friend.target_photo_id})
 
     return friend_data
 
@@ -116,6 +119,13 @@ def save_name_to_db(u_id, name, target_user_id):
 
     db.session.commit()
 
+
+
+
+def save_friend_photos():
+
+    # graph = connect_to_graph(access_token=fb_config['FB_TEST_TOKEN'])
+    pass
 
 
 
@@ -151,7 +161,7 @@ def explore_api():
 
 if __name__ == '__main__':
     # explore_api()
-    get_friend_data()
+    save_friend_photos()
 
 
 

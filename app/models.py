@@ -26,3 +26,4 @@ class Like_History(db.Model):
     date = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer)
     target_user_id = db.Column(db.Integer)
+    target_photo_id = db.Column(db.Integer)

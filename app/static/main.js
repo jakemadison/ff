@@ -14,7 +14,7 @@ var screen_width = (window.innerWidth || window.clientWidth || window.clientWidt
 //var screen_height = (window.innerHeight|| window.clientHeight|| window.clientHeight) - margin;
 var screen_height = 10000;
 
-function reset_distance(arr, target_id, target_name) {
+function reset_distance(arr, target_id, target_name, target_photo_id) {
     /*
      Called to reset distance of person.  Add that person if they don't exist yet.
      */
@@ -31,7 +31,11 @@ function reset_distance(arr, target_id, target_name) {
 
     if (!found) {
 
-        arr.push({'user_id': target_id, 'distance': 0, 'user_name': target_name, 'like_count': 1});
+        arr.push({
+            'user_id': target_id, 'distance': 0,
+            'user_name': target_name, 'like_count': 1,
+            'target_photo_id': target_photo_id
+        });
 
         if (target_name === '?') {
             FB.api(
@@ -93,14 +97,15 @@ function update_data(likes, svg) {
             //.attr("x", function (d, i) {
             //    return Math.random() * (screen_width - 100);
             //})
-            .attr("transform", function(d) {
+            .attr("transform", function (d) {
                 var x_val = Math.random() * (screen_width - 100);
                 d.x_val = x_val;
-                return "translate(" + x_val + "," + 100 + ")"; })
-            //
-            //.attr("x", function (d, i) {
-            //    return ;
-            //})
+                return "translate(" + x_val + "," + 100 + ")";
+            })
+    //
+    //.attr("x", function (d, i) {
+    //    return ;
+    //})
         ;
 
     // add text to our object:
@@ -112,49 +117,34 @@ function update_data(likes, svg) {
     // add image to our object:
     var node_image = node_enter.append("image")
         .attr("class", "node_image")
-        .attr("xlink:href", function (d) {
-            return "static/img/default.gif";
-        })
         .attr("width", "100px")
-        .attr("height", "100px");
+        .attr("height", "100px")
+        .style('opacity',.6);
 
 
-    //node_text.text(function (d) {
-    //
-    //    var display_name = "";
-    //
-    //    if (parent.user_name !== '?') {
-    //        display_name = parent.user_name;
-    //    }
-    //    else {
-    //        display_name = parent.user_id;
-    //    }
-    //
-    //    return display_name + '   -> ' + parent.like_count + ' (' + parent.distance + ')';
-    //});
+    node_enter.select(".node_image").attr("xlink:href", function (d) {
 
-    // operate on the entire group objext:
+        return "https://graph.facebook.com/" + d.user_id + "/picture?type=large";
+
+        //
+        //if (d.target_photo_id) {
+        //    return "static/img/"+d.target_photo_id;
+        //}
+        //else {
+        //    return "static/img/default.gif";
+        //}
+    });
+
+    // operate on the entire group object:
     node.transition().duration(animation_speed + (Math.random() * jiggle_duration))
-
-        .attr("transform", function(d, i, j) {
-            return "translate("+ d.x_val +"," + (d.distance + 0) + (Math.random() * jiggle) + ")";
+        .attr("transform", function (d, i, j) {
+            return "translate(" + d.x_val + "," + (d.distance + 0) + (Math.random() * jiggle) + ")";
         });
 
     node.select(".node_text").text(function (d) {
-
-        var display_name = "";
-
-        if (d.user_name !== '?') {
-            display_name = d.user_name;
-        }
-        else {
-            display_name = d.user_id;
-        }
-
-        return display_name + '   -> ' + d.like_count + ' (' + d.distance + ')';
+        return d.user_name + '   -> ' + d.like_count + ' (' + d.distance + ')';
     });
 
-    //console.log('updating....', imgs);
 
 }
 
@@ -188,7 +178,9 @@ function start_animation(data) {
 
         while (index_date <= current_date && index < data.length - 1) {
 
-            active_data = reset_distance(active_data, data[index].user_id, data[index].name);
+            active_data = reset_distance(active_data, data[index].user_id,
+                data[index].name, data[index].target_photo_id);
+
             update_data(active_data, svg);
 
             index++;
