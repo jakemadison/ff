@@ -3,8 +3,9 @@
  */
 
 
-var animation_speed = 350;
-var jiggle = 50;  // amt of randomness to add.
+var animation_speed = 150;
+var jiggle = 5;  // amt of randomness to add.
+var jiggle_duration = 75;
 var animating = false;
 var advance_timer;
 
@@ -75,11 +76,11 @@ function update_data(likes, svg) {
     console.log('updating....', svg);
 
     // get the current imgs + join any new data:
-    var imgs = svg.selectAll("text")
+    var node = svg.selectAll("g.node")
         .data(likes);
 
     // for updates:
-    imgs.attr("class", "update");
+    //node.attr("class", "update");
     //.transition()
     //.duration(750)
     //.attr("x", function (d, i) {
@@ -87,21 +88,59 @@ function update_data(likes, svg) {
     //});
 
     // on enter, add a new image thing...
-    imgs.enter()
-        .append("text")
-        .attr("class", "enter")
-        //.attr("xlink:href", "file://Users/Madison/Development/friend_browser/app/static/img/crazy_128.png")
-        //.attr("x", "60")
-        .attr("x", function (d, i) {
-            return Math.random() * (screen_width - 100);
-        })
-        .attr("y", 0)
-        //.attr("y", function(d, i) { console.log('yep'); return i * 32; })
+
+    var node_enter = node.enter().append("g").attr("class", "node")
+            //.attr("x", function (d, i) {
+            //    return Math.random() * (screen_width - 100);
+            //})
+            .attr("transform", function(d) {
+                var x_val = Math.random() * (screen_width - 100);
+                d.x_val = x_val;
+                return "translate(" + x_val + "," + 100 + ")"; })
+            //
+            //.attr("x", function (d, i) {
+            //    return ;
+            //})
+        ;
+
+    // add text to our object:
+    var node_text = node_enter.append("text")
+        .attr("class", "node_text")
         .attr("width", "20")
         .attr("height", "20");
 
+    // add image to our object:
+    var node_image = node_enter.append("image")
+        .attr("class", "node_image")
+        .attr("xlink:href", function (d) {
+            return "static/img/default.gif";
+        })
+        .attr("width", "100px")
+        .attr("height", "100px");
 
-    imgs.text(function (d) {
+
+    //node_text.text(function (d) {
+    //
+    //    var display_name = "";
+    //
+    //    if (parent.user_name !== '?') {
+    //        display_name = parent.user_name;
+    //    }
+    //    else {
+    //        display_name = parent.user_id;
+    //    }
+    //
+    //    return display_name + '   -> ' + parent.like_count + ' (' + parent.distance + ')';
+    //});
+
+    // operate on the entire group objext:
+    node.transition().duration(animation_speed + (Math.random() * jiggle_duration))
+
+        .attr("transform", function(d, i, j) {
+            return "translate("+ d.x_val +"," + (d.distance + 0) + (Math.random() * jiggle) + ")";
+        });
+
+    node.select(".node_text").text(function (d) {
 
         var display_name = "";
 
@@ -115,11 +154,7 @@ function update_data(likes, svg) {
         return display_name + '   -> ' + d.like_count + ' (' + d.distance + ')';
     });
 
-    imgs.transition().duration(animation_speed + (Math.random() * jiggle)).attr("y", function (d, i) {
-        return (d.distance + 1) * 32 + (Math.random() * jiggle);
-    });
-
-    console.log('updating....', imgs);
+    //console.log('updating....', imgs);
 
 }
 
