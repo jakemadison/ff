@@ -4,8 +4,8 @@
 
 
 var animation_speed = 150;
-var jiggle = 4;  // amt of randomness to add.
-var jiggle_duration = 75;
+var jiggle = 20;  // amt of randomness to add.
+var jiggle_duration = 100;
 var animating = false;
 var advance_timer;
 
@@ -94,12 +94,11 @@ function update_data(likes, svg) {
     // on enter, add a new image thing...
 
     var node_enter = node.enter().append("g").attr("class", "node")
-            //.attr("x", function (d, i) {
-            //    return Math.random() * (screen_width - 100);
-            //})
             .attr("transform", function (d) {
+
                 var x_val = Math.random() * (screen_width - 100);
                 d.x_val = x_val;
+
                 var y_offset = Math.floor(Math.abs(Math.random() * 10));
                 d.y_offset = y_offset;
 
@@ -121,7 +120,7 @@ function update_data(likes, svg) {
         .attr("class", "node_image")
         .attr("width", "100px")
         .attr("height", "100px")
-        .style('opacity',.9);  // .6
+        .style('opacity',1);  // .6
 
 
     node_enter.select(".node_image").attr("xlink:href", function (d) {
@@ -138,10 +137,16 @@ function update_data(likes, svg) {
     });
 
     // operate on the entire group object:
-    node.transition().duration(animation_speed + (Math.random() * jiggle_duration))
-        .attr("transform", function (d, i, j) {
+    node.transition()
+        .duration(function (d) {
+       //return animation_speed + (Math.random() * jiggle_duration)
+        return animation_speed*2;
+
+    })
+        .attr("transform", function (d) {
             //d.y_cur = (d.distance + d.y_offset) * (d.speed_offset - (d.like_count/10 *.3));
-            d.y_cur = (d.distance + d.y_offset) * (d.speed_offset);
+
+            d.y_cur = (d.distance*5 + d.y_offset) * Math.floor(d.speed_offset);
             return "translate(" + d.x_val + "," + d.y_cur + ")";
         })
         .attr('opacity', function (d) {
