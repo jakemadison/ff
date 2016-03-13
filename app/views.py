@@ -4,7 +4,7 @@ from flask import g, render_template, redirect, request, session, url_for, jsoni
 from app import app, db
 from models import User
 from local_config import fb_config
-from fb_controller import get_friend_data
+from fb_controller import get_friend_data, save_name_to_db
 
 @app.route('/')
 def index():
@@ -86,3 +86,16 @@ def get_current_user():
 def friend_request():
     friend_data = get_friend_data()
     return jsonify({'data': friend_data})
+
+
+
+
+@app.route('/save_name', methods=['GET', 'POST'])
+def save_name():
+
+    name = request.form['name']
+    u_id = request.form['id']
+
+    save_name_to_db(u_id=u_id, name=name)
+
+    return jsonify({'result': 'good'})

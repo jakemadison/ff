@@ -3,8 +3,17 @@
  */
 
 
+var animation_speed = 700;
+var jiggle = 50;  // amt of randomness to add.
 
-function reset_distance(arr, target_id) {
+var advance_timer;
+
+var margin = 100;
+var screen_width = (window.innerWidth || window.clientWidth || window.clientWidth) - margin;
+//var screen_height = (window.innerHeight|| window.clientHeight|| window.clientHeight) - margin;
+var screen_height = 10000;
+
+function reset_distance(arr, target_id, target_name) {
     /*
      Called to reset distance of person.  Add that person if they don't exist yet.
      */
@@ -14,12 +23,43 @@ function reset_distance(arr, target_id) {
     for (var i = 0; i < arr.length; i++) {
         if (arr[i].user_id === target_id) {
             arr[i].distance = 0;
+            arr[i].like_count++;
             found = true;
         }
     }
 
     if (!found) {
-        arr.push({'user_id': target_id, 'distance': 0});
+
+        arr.push({'user_id': target_id, 'distance': 0, 'user_name': target_name, 'like_count': 1});
+
+        if (target_name === '?') {
+            FB.api(
+                "/" + target_id,
+                function (response) {
+                    if (response && !response.error) {
+                        /* handle the result */
+                        console.log('-------->', response);
+
+                        // find the entry in our data and update the name:
+                        for (var i = 0; i < arr.length; i++) {
+                            if (arr[i].user_id.toString() === response.id) {
+                                arr[i].user_name = response.name;
+                            }
+                        }
+
+                        // might as well send to DB as well:
+                        $.post('/save_name', {name: response.name, id: response.id}, function (resp) {
+                            console.log('saved.', resp);
+                        })
+                    } else {
+                        console.log(response);
+                    }
+                }
+
+            );
+        }
+
+
     }
 
     return arr;
@@ -51,7 +91,7 @@ function update_data(likes, svg) {
         //.attr("xlink:href", "file://Users/Madison/Development/friend_browser/app/static/img/crazy_128.png")
         //.attr("x", "60")
         .attr("x", function (d, i) {
-            return Math.random() * (960 - 0) + 0;
+            return Math.random() * (screen_width - 100);
         })
         .attr("y", 0)
         //.attr("y", function(d, i) { console.log('yep'); return i * 32; })
@@ -60,11 +100,21 @@ function update_data(likes, svg) {
 
 
     imgs.text(function (d) {
-        return d.user_id + '   -> ' + d.distance;
+
+        var display_name = "";
+
+        if (d.user_name !== '?') {
+            display_name = d.user_name;
+        }
+        else {
+            display_name = d.user_id;
+        }
+
+        return display_name + '   -> ' + d.like_count + ' ('+ d.distance + ')';
     });
 
-    imgs.transition().duration(750).attr("y", function (d, i) {
-        return (d.distance + 1) * 32;
+    imgs.transition().duration(animation_speed + (Math.random() * jiggle)).attr("y", function (d, i) {
+        return (d.distance + 1) * 32 + (Math.random() * jiggle);
     });
 
     console.log('updating....', imgs);
@@ -73,14 +123,12 @@ function update_data(likes, svg) {
 
 
 function start_animation(data) {
+
     console.log('starting animation.....');
 
-    var width = 960,
-        height = 10000;
-
     var svg = d3.select("body").append("svg")
-        .attr("width", width)
-        .attr("height", height)
+        .attr("width", screen_width)
+        .attr("height", screen_height)
         .append("g");
     //.attr("transform", "translate(32," + (height / 2) + ")");
 
@@ -103,7 +151,7 @@ function start_animation(data) {
 
         while (index_date <= current_date && index < data.length - 1) {
 
-            active_data = reset_distance(active_data, data[index].user_id);
+            active_data = reset_distance(active_data, data[index].user_id, data[index].name);
             update_data(active_data, svg);
 
             index++;
@@ -122,40 +170,7 @@ function start_animation(data) {
     }
 
 
-    window.setInterval(advance_day, 200);
-
-
-    //while (current_date < today) {
-    //
-    //    current_date.setDate(current_date.getDate() + 1);
-    //
-    //    $('#date_label').text(current_date);
-    //    var index_date = new Date(data[index].date);
-    //
-    //    while (index_date <= current_date && index < data.length - 1) {
-    //        //console.log('==========>', data[index].date);
-    //        active_data = reset_distance(active_data, data[index].user_id);
-    //        update_data(active_data, svg);
-    //
-    //        index++;
-    //        index_date = new Date(data[index].date);
-    //
-    //    }
-    //
-    //    // every day, distance should increase by 1..
-    //    for (var i = 0; i < active_data.length; i++) {
-    //        active_data[i].distance++;
-    //    }
-    //
-    //    update_data(active_data, svg);
-    //
-    //
-    //    if (index > 5) {
-    //        break;
-    //    }
-    //
-    //}
-
+    advance_timer = window.setInterval(advance_day, animation_speed);
 
     console.log('done');
 

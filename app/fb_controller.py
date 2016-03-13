@@ -96,11 +96,21 @@ def get_friend_data():
     friend_data = []
 
     for friend in friends:
-        friend_data.append({'user_id': friend.user_id, 'date': friend.date})
+        friend_data.append({'user_id': friend.user_id, 'date': friend.date, 'name': friend.name})
 
     return friend_data
 
 
+
+
+def save_name_to_db(u_id, name):
+
+    found = db.session.query(Like_History).filter(Like_History.user_id == int(u_id))
+
+    print '------>', found.all()
+    found.update({'name': name})
+
+    db.session.commit()
 
 
 
