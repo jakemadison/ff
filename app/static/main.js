@@ -103,7 +103,7 @@ function update_data(likes, svg) {
                 var y_offset = Math.floor(Math.abs(Math.random() * 10));
                 d.y_offset = y_offset;
 
-                d.speed_offset = Math.floor(Math.abs(Math.random() * 18))+2;
+                d.speed_offset = Math.floor(Math.abs(Math.random() * 8))+5;
 
                 return "translate(" + x_val + "," + (0 + y_offset) + ")";
             })
@@ -121,7 +121,7 @@ function update_data(likes, svg) {
         .attr("class", "node_image")
         .attr("width", "100px")
         .attr("height", "100px")
-        .style('opacity',1);  // .6
+        .style('opacity',.9);  // .6
 
 
     node_enter.select(".node_image").attr("xlink:href", function (d) {
@@ -140,6 +140,7 @@ function update_data(likes, svg) {
     // operate on the entire group object:
     node.transition().duration(animation_speed + (Math.random() * jiggle_duration))
         .attr("transform", function (d, i, j) {
+            //d.y_cur = (d.distance + d.y_offset) * (d.speed_offset - (d.like_count/10 *.3));
             d.y_cur = (d.distance + d.y_offset) * (d.speed_offset);
             return "translate(" + d.x_val + "," + d.y_cur + ")";
         })

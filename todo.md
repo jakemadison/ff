@@ -146,6 +146,8 @@ Left to do:
 - actual support for someone else to log in
 - fb review??
 - fix the stop/start btn
+- the acceleration function is over weigting older friends... acceleration factor increase should slowly decay over
+time too.. not just like count and distance.
 
 
 
