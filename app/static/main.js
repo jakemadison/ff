@@ -3,9 +3,9 @@
  */
 
 
-var animation_speed = 700;
+var animation_speed = 350;
 var jiggle = 50;  // amt of randomness to add.
-
+var animating = false;
 var advance_timer;
 
 var margin = 100;
@@ -48,14 +48,16 @@ function reset_distance(arr, target_id, target_name) {
                         }
 
                         // might as well send to DB as well:
-                        $.post('/save_name', {name: response.name, id: response.id}, function (resp) {
+                        $.post('/save_name', {
+                            name: response.name,
+                            id: response.id, target_user_id: TARGET_USER_ID
+                        }, function (resp) {
                             console.log('saved.', resp);
                         })
                     } else {
                         console.log(response);
                     }
                 }
-
             );
         }
 
@@ -110,7 +112,7 @@ function update_data(likes, svg) {
             display_name = d.user_id;
         }
 
-        return display_name + '   -> ' + d.like_count + ' ('+ d.distance + ')';
+        return display_name + '   -> ' + d.like_count + ' (' + d.distance + ')';
     });
 
     imgs.transition().duration(animation_speed + (Math.random() * jiggle)).attr("y", function (d, i) {
@@ -171,6 +173,7 @@ function start_animation(data) {
 
 
     advance_timer = window.setInterval(advance_day, animation_speed);
+    animating = true;
 
     console.log('done');
 
@@ -179,7 +182,7 @@ function start_animation(data) {
 
 function get_data() {
 
-    d3.json('/get_friend_data', function (response) {
+    d3.json('/get_friend_data?target_user_id=' + TARGET_USER_ID, function (response) {
         console.log(response.data);
         start_animation(response.data)
     });
@@ -187,4 +190,19 @@ function get_data() {
 }
 
 
+function toggle_animation() {
 
+    if (animating) {
+        window.clearInterval(advance_timer);
+        animating = false;
+        $('#ctrl_btn').text('START');
+    } else {
+
+        // oops, this needs start_animation vars to work properly...
+        advance_timer = window.setInterval(advance_day, animation_speed);
+        animating = true;
+        $('#ctrl_btn').text('STOP');
+    }
+
+
+}

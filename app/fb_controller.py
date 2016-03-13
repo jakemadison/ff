@@ -89,9 +89,12 @@ def get_all_comments_likes_per_post(graph, post_id, current_results):
 
 
 
-def get_friend_data():
+def get_friend_data(target_user_id):
 
-    friends = Like_History.query.order_by(asc(Like_History.date)).filter(Like_History.date >= '2010-01-01').all()
+    friends = Like_History.query.order_by(asc(Like_History.date))
+    friends = friends.filter(Like_History.date >= '2010-01-01')
+    friends = friends.filter(Like_History.target_user_id == target_user_id)
+    friends = friends.all()
 
     friend_data = []
 
@@ -103,9 +106,10 @@ def get_friend_data():
 
 
 
-def save_name_to_db(u_id, name):
+def save_name_to_db(u_id, name, target_user_id):
 
     found = db.session.query(Like_History).filter(Like_History.user_id == int(u_id))
+    found = found.filter(Like_History.target_user_id == target_user_id)
 
     print '------>', found.all()
     found.update({'name': name})

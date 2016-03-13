@@ -84,7 +84,9 @@ def get_current_user():
 
 @app.route('/get_friend_data')
 def friend_request():
-    friend_data = get_friend_data()
+
+    target_user_id = request.args.get('target_user_id')
+    friend_data = get_friend_data(target_user_id)
     return jsonify({'data': friend_data})
 
 
@@ -95,7 +97,8 @@ def save_name():
 
     name = request.form['name']
     u_id = request.form['id']
+    target_user_id = request.form['target_user_id']
 
-    save_name_to_db(u_id=u_id, name=name)
+    save_name_to_db(u_id=u_id, name=name, target_user_id=target_user_id)
 
     return jsonify({'result': 'good'})

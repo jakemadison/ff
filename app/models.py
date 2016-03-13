@@ -25,3 +25,4 @@ class Like_History(db.Model):
     name = db.Column(db.String, nullable=False)
     date = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer)
+    target_user_id = db.Column(db.Integer)
