@@ -91,14 +91,20 @@ def get_all_comments_likes_per_post(graph, post_id, current_results):
 
 def get_friend_data(target_user_id):
 
+    min_date = '2011-01-01'
+
     friends = Like_History.query.order_by(asc(Like_History.date))
-    friends = friends.filter(Like_History.date >= '2010-01-01')
+    friends = friends.filter(Like_History.date >= min_date)
     friends = friends.filter(Like_History.target_user_id == target_user_id)
     friends = friends.all()
 
     friend_data = []
 
     for friend in friends:
+
+        if friend.name == '?':  # TODO: won't work for new users.
+            continue
+
         friend_data.append({'user_id': friend.user_id,
                             'date': friend.date,
                             'name': friend.name,

@@ -3,7 +3,7 @@
  */
 
 
-var animation_speed = 150;
+var animation_speed = 200;
 var jiggle = 20;  // amt of randomness to add.
 var jiggle_duration = 100;
 var animating = false;
@@ -140,14 +140,17 @@ function update_data(likes, svg) {
     node.transition()
         .duration(function (d) {
        //return animation_speed + (Math.random() * jiggle_duration)
-        return animation_speed*2;
-
+       // return animation_speed*2;
+        return animation_speed+200;
     })
+        .ease('linear')
         .attr("transform", function (d) {
-            //d.y_cur = (d.distance + d.y_offset) * (d.speed_offset - (d.like_count/10 *.3));
+            d.y_cur = (d.distance + d.y_offset) * (d.speed_offset - (d.like_count/10 *.3));
+            //
+            //d.y_cur = (d.distance + d.y_offset) * Math.floor(d.speed_offset);
 
-            d.y_cur = (d.distance*5 + d.y_offset) * Math.floor(d.speed_offset);
             return "translate(" + d.x_val + "," + d.y_cur + ")";
+
         })
         .attr('opacity', function (d) {
             return .9 - (d.y_cur/1000);
