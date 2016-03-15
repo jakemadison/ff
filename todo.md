@@ -12,7 +12,6 @@ friends that you don't interact with.  Which is bullshit.
 
 Anyways:
 ===============
-
 Connect via FB graph.  distance from top line of webpage is amount of time since last interaction.
 
 Each person can be represented with their FB icon + name.  They can be randomized on the X axis, or some
@@ -42,7 +41,6 @@ D3 then + FB graph in the background.
 
 Plan:
 ===============
-
 -> get the most recent interaction per person.  Compare that vs most recent date.
 -> fuck wait, no, it should be the number per time... a bunch of interactions should have a stronger effect
 than just one more recent event.
@@ -112,7 +110,6 @@ on the User object.
 
 Okay, so confirmed:
 =======
-
 AFAICT, I can go through a user's facebook post history which will include everything they've posted on their own
  wall, who has commented and liked it.  That stream will also return items other people have posted on their wall
  (which should get some sort of higher weighting), and of course what other people have written on there.
@@ -138,8 +135,8 @@ on each one, a few more points.... hmmmm...
 
 
 
-=======
 Left to do:
+========
 - speed offset should be inversely affected by number of total likes.  (slows a frequent liker down)
 - removed elements shouldn't use up resources...
 - get stuff lazily/as we go rather than storing everything upfront
@@ -150,6 +147,22 @@ Left to do:
 time too.. not just like count and distance.
 
 
+
+
+Plan for other users:
+========
+- loading screen only goes out and grabs all post IDs.
+
+- sort chronologically, for each post ID, go out and grab post "like" information, for each like on that date, grab
+  user information.
+  
+- can we buffer somehow?
+
+- okay, so there isn't a post every day, but we shouldn't care if there's a post or not.. that service should just
+ always be running in the bg.  On the server side?  use multiprocessing worker pools?
+ --> 1 pool uses post information, grabs like data
+ --> another pool grabs user info from like data
+ --> a final pool stores that like data and name data in the db
 
 
 
