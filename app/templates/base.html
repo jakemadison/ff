@@ -4,8 +4,8 @@
     <!-- Meta content -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Example Facebook app using Flask and Python for Facebook SDK">
-    <meta name="author" content="github.com/mylsb">
+    <meta name="description" content="Browse your friends...">
+    <meta name="author" content="github.com/jakemadison">
 
     <!-- These are Open Graph tags.-->
     <meta property="fb:app_id" content="{{ app_id }}" />
@@ -35,7 +35,9 @@
       </script>
     <![endif]-->
 </head>
+
 <body onload="get_data();">
+
     <script type="text/javascript">
         window.fbAsyncInit = function() {
             FB.init({
@@ -46,6 +48,7 @@
             });
 
             FB.Event.subscribe('auth.login', function(response) {
+                // when auth login happens, reload the page.
                 window.location = window.location;
             });
         };
@@ -58,6 +61,8 @@
             js.src = "//connect.facebook.net/en_US/all.js";
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
+
+
     </script>
 
     <div class="container">

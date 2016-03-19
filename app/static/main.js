@@ -125,8 +125,8 @@ function update_data(likes) {
     // add image to our object:
     var node_image = node_enter.append("image")
         .attr("class", "node_image")
-        .attr("width", "100px")
-        .attr("height", "100px")
+        .attr("width", "50px")
+        .attr("height", "50px")
         .style('opacity',.6).on("mouseover", function(d) {  // the mouseover event
             d.z_index = d3.select(this).zIndex;
             d3.select(this).style("opacity", 1);
@@ -253,6 +253,9 @@ function start_animation(data) {
 
 
 function get_data() {
+
+
+    console.log('beginning to get data...');
 
     /*
     This should really be an init function and do all of our set up junk as well while that thing is grabbing data

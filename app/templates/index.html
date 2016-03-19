@@ -1,21 +1,35 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="center">
+
     <p class='circle-image'
        style="background-image: url(https://graph.facebook.com/{{ user['id'] }}/picture?type=large);
               margin-left: auto; margin-right: auto;">
     </p>
+
     <h3>{{ user['name'] }}: <span id="date_label">?</span></h3>
+
+
+    <p>
+        <button id='ctrl_btn' onclick="toggle_animation()">STOP</button>
+    </p>
+
+
     <a href="/logout" id="logout">Log out</a>
+
     <script>
+
         TARGET_USER_ID = {{ user['id'] }};
 
         document.getElementById('logout').onclick = function() {
             FB.logout(function(response) { });
         };
+
     </script>
 
-    <button id='ctrl_btn' onclick="toggle_animation()">STOP</button>
+
+
 
 </div>
 {% endblock %}

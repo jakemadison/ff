@@ -13,6 +13,7 @@ def index():
     if g.user:
         return render_template('index.html', app_id=fb_config['FB_APP_ID'],
                                app_name=fb_config['FB_APP_NAME'], user=g.user)
+
     # Otherwise, a user is not logged in.
     return render_template('login.html', app_id=fb_config['FB_APP_ID'], name=fb_config['FB_APP_NAME'])
 
@@ -82,9 +83,21 @@ def get_current_user():
     g.user = session.get('user', None)
 
 
+@app.route('get_user_posts')
+def get_posts():
+    """
+    When first logging in, for the current user, grab all of their post IDs to later send to worker queues.
+    :return:
+    """
+    user = g.user
+    print user
+
+    return jsonify({'data': 'success'})
+
+
+
 @app.route('/get_friend_data')
 def friend_request():
-
     target_user_id = request.args.get('target_user_id')
     friend_data = get_friend_data(target_user_id)
     return jsonify({'data': friend_data})
