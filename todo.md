@@ -171,3 +171,11 @@ More To Do:
 -> which is going to have to involve figuring out actual distances here
 - ooooh, sidebar minimap? that would be fuuuucking cool.  but very hard to do...?
 - on hover: opacity -> 1.  Add link to actual profile as well.
+
+
+
+
+===> one way to make this a lot smarter would be to have each element figure out when the next update is, and just
+tween to that location... that way we are not updating all elements every day iteration.
+
+
