@@ -83,7 +83,7 @@ def get_current_user():
     g.user = session.get('user', None)
 
 
-@app.route('get_user_posts')
+@app.route('/get_user_posts')
 def get_posts():
     """
     When first logging in, for the current user, grab all of their post IDs to later send to worker queues.
