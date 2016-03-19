@@ -12,6 +12,7 @@ body {
     min-width: 200px;
     max-width: 400px;
     padding: 40px;
+    z-index: 1;
 }
 
 .circle-image {
@@ -27,4 +28,32 @@ body {
     /*height: 200px;*/
     border-radius: 50;
     display: block;
+}
+
+.node_image:hover {
+    z-index:555555 !important;
+    cursor: pointer;
+}
+
+path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
+
+.grid .tick {
+    stroke: lightgrey;
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+.grid path {
+    stroke-width: 0;
 }

@@ -165,4 +165,9 @@ Plan for other users:
  --> a final pool stores that like data and name data in the db
 
 
-
+More To Do:
+=======
+- should add guide lines down the page for time since last seen...
+-> which is going to have to involve figuring out actual distances here
+- ooooh, sidebar minimap? that would be fuuuucking cool.  but very hard to do...?
+- on hover: opacity -> 1.  Add link to actual profile as well.

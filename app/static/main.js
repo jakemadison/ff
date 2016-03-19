@@ -3,6 +3,8 @@
  */
 
 
+var svg;
+
 var animation_speed = 200;
 var jiggle = 20;  // amt of randomness to add.
 var jiggle_duration = 100;
@@ -12,7 +14,12 @@ var advance_timer;
 var margin = 100;
 var screen_width = (window.innerWidth || window.clientWidth || window.clientWidth) - margin;
 //var screen_height = (window.innerHeight|| window.clientHeight|| window.clientHeight) - margin;
-var screen_height = 1000;
+var screen_height = 10000;
+var day_pixel_height = 5;
+var top_margin = 30;
+
+var	parseDate = d3.time.format("%d-%b-%y").parse;
+
 
 function reset_distance(arr, target_id, target_name, target_photo_id) {
     /*
@@ -73,11 +80,11 @@ function reset_distance(arr, target_id, target_name, target_photo_id) {
 
 }
 
-function update_data(likes, svg) {
+function update_data(likes) {
 
     // get the user profile from fb... then make an element with it, then do something...
     // crap, we have to update....
-    console.log('updating....', svg);
+    //console.log('updating....', svg);
 
     // get the current imgs + join any new data:
     var node = svg.selectAll("g.node")
@@ -104,7 +111,7 @@ function update_data(likes, svg) {
 
                 d.speed_offset = Math.floor(Math.abs(Math.random() * 8))+5;
 
-                return "translate(" + x_val + "," + (0 + y_offset) + ")";
+                return "translate(" + x_val + "," + y_offset + ")";
             })
 
         ;
@@ -113,14 +120,26 @@ function update_data(likes, svg) {
     var node_text = node_enter.append("text")
         .attr("class", "node_text")
         .attr("width", "20")
-        .attr("height", "20");
+        .attr("height", "20").style("visibility", "hidden");
 
     // add image to our object:
     var node_image = node_enter.append("image")
         .attr("class", "node_image")
         .attr("width", "100px")
         .attr("height", "100px")
-        .style('opacity',1);  // .6
+        .style('opacity',.6).on("mouseover", function(d) {  // the mouseover event
+            d.z_index = d3.select(this).zIndex;
+            d3.select(this).style("opacity", 1);
+        }).on("mouseout", function (d) {
+            d3.select(this).style("opacity",.6);
+        });
+
+
+    node.on("mouseover", function (d) {
+        d3.select(this).selectAll(".node_text").style("visibility", "visible");
+    }).on("mouseout", function (d) {
+        d3.select(this).selectAll(".node_text").style("visibility", "hidden");
+    });
 
 
     node_enter.select(".node_image").attr("xlink:href", function (d) {
@@ -145,16 +164,19 @@ function update_data(likes, svg) {
     })
         .ease('linear')
         .attr("transform", function (d) {
-            d.y_cur = (d.distance + d.y_offset) * (d.speed_offset - (d.like_count/10 *.3));
+            d.y_cur = ((d.distance) * day_pixel_height) + d.y_offset;
+
+            //d.y_cur = (d.distance + d.y_offset) * (d.speed_offset - (d.like_count/10 *.3));
             //
             //d.y_cur = (d.distance + d.y_offset) * Math.floor(d.speed_offset);
 
             return "translate(" + d.x_val + "," + d.y_cur + ")";
 
-        })
-        .attr('opacity', function (d) {
-            return .9 - (d.y_cur/1000);
         });
+
+        //.attr('opacity', function (d) {
+        //    return .9 - (d.y_cur/1000);
+        //});
 
     //;
     //
@@ -178,10 +200,6 @@ function start_animation(data) {
 
     console.log('starting animation.....');
 
-    var svg = d3.select("body").append("svg")
-        .attr("width", screen_width)
-        .attr("height", screen_height)
-        .append("g");
     //.attr("transform", "translate(32," + (height / 2) + ")");
 
     // this should actually just get each day, and run on a timer....
@@ -208,7 +226,7 @@ function start_animation(data) {
             active_data = reset_distance(active_data, data[index].user_id,
                 data[index].name, data[index].target_photo_id);
 
-            update_data(active_data, svg);
+            update_data(active_data);
 
             index++;
             index_date = new Date(data[index].date);
@@ -236,10 +254,91 @@ function start_animation(data) {
 
 function get_data() {
 
+    /*
+    This should really be an init function and do all of our set up junk as well while that thing is grabbing data
+    from the server.
+     */
+
+
+    svg = d3.select("body").append("svg")
+        .attr("width", screen_width)
+        .attr("height", screen_height)
+        .append("g");
+
+
     d3.json('/get_friend_data?target_user_id=' + TARGET_USER_ID, function (response) {
         console.log(response.data);
-        start_animation(response.data)
+        start_animation(response.data);
+
+
+        // should get the number of days total here...
+        var oneDay = 24*60*60*1000; // hours*minutes*seconds*milliseconds
+        var firstDate = new Date(response.data[0].date);
+        var secondDate = new Date(response.data[response.data.length - 1].date);
+
+        var diffDays = Math.round(Math.abs((firstDate.getTime() - secondDate.getTime())/(oneDay)));
+
+        var	y = d3.scale.linear()
+            .domain([0, diffDays])
+            .range([top_margin, screen_height]);
+
+        var	yAxis = d3.svg.axis().scale(y).orient('right').ticks(50).tickFormat(function (d) {
+            return d/day_pixel_height + ' days';
+        })
+            .tickSize(0)
+            .tickPadding(8);
+
+
+        // function for the y grid lines
+        function make_y_axis() {
+            return d3.svg.axis()
+                .scale(y)
+                .orient("left")
+                .ticks(50)
+        }
+
+        // Draw the y Grid lines
+        svg.append("g")
+            .attr("class", "grid")
+            .call(make_y_axis()
+                .tickSize(-screen_width, 0, 0)
+                .tickFormat("")
+        );
+
+
+        var line = d3.svg.line()
+            .x(function(d) { return xScale(d.x); })
+            .y(function(d) { return yScale(d.y); });
+
+        svg.append('g').call(yAxis).selectAll("text").attr("dy", -5).style("opacity",.5);
+
     });
+
+
+
+
+
+
+
+    //
+    //
+    //
+    //
+    //svg.append("line")
+    //    .attr("class", "mean-line")
+    //    .attr({ x1: 0, y1: 300,
+    //        x2: 100, y2: 300}).attr("stroke-width", 2)
+    //    .attr("stroke", "black").append("text").text(function (d) {
+    //        return 'textttt';
+    //    }).opacity(.6).attr("fill", "Maroon")
+    //    .style("font", "normal 12px Arial")
+    //    .attr("dy", ".35em")		.attr("dy", ".35em")
+    //    .attr("text-anchor", "start")
+    //    .style("fill", "red");
+    //
+
+
+
 
 }
 
