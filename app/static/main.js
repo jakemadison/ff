@@ -5,7 +5,7 @@
 
 var svg;
 
-var animation_speed = 200;
+var animation_speed = 75;
 var jiggle = 20;  // amt of randomness to add.
 var jiggle_duration = 100;
 var animating = false;
@@ -120,7 +120,11 @@ function update_data(likes) {
     var node_text = node_enter.append("text")
         .attr("class", "node_text")
         .attr("width", "20")
-        .attr("height", "20").style("visibility", "hidden");
+        .attr("height", "20")
+        .transition().duration(function (d, i) {
+            return 2000+5*i;
+        }).style("opacity", 0);
+        //.style("visibility", "hidden");
 
     // add image to our object:
     var node_image = node_enter.append("image")
@@ -136,7 +140,7 @@ function update_data(likes) {
 
 
     node.on("mouseover", function (d) {
-        d3.select(this).selectAll(".node_text").style("visibility", "visible");
+        d3.select(this).selectAll(".node_text").style("visibility", "visible").style("opacity", 1);
     }).on("mouseout", function (d) {
         d3.select(this).selectAll(".node_text").style("visibility", "hidden");
     });
